@@ -72,7 +72,7 @@ catalog:
       label: "Image tag"
       description: "Custom image tag to be imposed on kartoza/geonode_django_geosafe"
       required: false
-      default: "qgis-server-2.8"
+      default: qgis-server-2.8
       type: "string"
 
 services:
