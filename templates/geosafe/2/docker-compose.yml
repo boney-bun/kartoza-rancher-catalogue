@@ -19,6 +19,12 @@ volumes:
 
 services:
 
+  codenvy:
+    image: codenvy/che-ip:nightly
+    network_mode: "host"
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+
   rabbitmq:
     image: rabbitmq
 
@@ -168,12 +174,6 @@ services:
       - rabbitmq
       - qgis-server
       - codenvy
-
-  codenvy:
-    image: codenvy/che-ip:nightly
-    network_mode: "host"
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
 
   nginx:
     image: kartoza/geonode_nginx
