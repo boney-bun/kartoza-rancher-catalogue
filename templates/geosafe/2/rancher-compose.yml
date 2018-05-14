@@ -120,6 +120,3 @@ services:
   postgis:
     scale: 1
     start_on_create: true
-  codenvy:
-    scale: 1
-    start_on_create: true

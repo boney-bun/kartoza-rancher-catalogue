@@ -154,7 +154,6 @@ services:
 
   django:
     image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
-    #image: kartoza/geonode_django_geosafe
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'django-static-data:/usr/src/app/geonode/static_root'
@@ -309,6 +308,8 @@ services:
       - rabbitmq
       - nginx
       - django
+      
+      
   btsync-data:
     # BTSync backups for database dumps
     image: kartoza/btsync
