@@ -24,9 +24,16 @@ services:
     network_mode: "host"
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
+    labels:
+        org.geonode.component: codenvy
+        org.geonode.instance.name: geonode
 
   rabbitmq:
     image: rabbitmq
+    labels:
+        org.geonode.component: rabbitmq
+        org.geonode.instance.name: geonode
+    
 
   postgis:
     image: kartoza/geonode_db
@@ -37,6 +44,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASS=${POSTGRES_PASS}
       - ALLOW_IP_RANGE=${POSTGRES_HBA_RANGE}
+    labels:
+        org.geonode.component: postgis
+        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
   dbbackup: &dbbackup
@@ -55,6 +65,9 @@ services:
       - PGDATABASE=${POSTGRES_DB}
       - PGPORT=5432
       - PGHOST=postgis
+    labels:
+        org.geonode.component: dbbackup
+        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
   mediabackup:
@@ -73,6 +86,9 @@ services:
       - YEARLY=1
       - TARGET_FOLDER=/media_backup
       - USE_SFTP_BACKUP=False
+    labels:
+        org.geonode.component: mediabackup
+        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
   qgisservermediabackup:
@@ -91,6 +107,9 @@ services:
       - YEARLY=1
       - TARGET_FOLDER=/media_backup
       - USE_SFTP_BACKUP=False
+    labels:
+        org.geonode.component: qgisservermediabackup
+        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
   qgis-server:
@@ -99,7 +118,7 @@ services:
     - 80:80/tcp
     labels:
       io.rancher.container.agent.role: environmentAdmin
-      io.rancher.container.create_agent: 'true'
+      io.rancher.container.create_agent: 'true'      
     restart: unless-stopped
 
   qgis-server-backend:
@@ -130,6 +149,9 @@ services:
       # You could change this to something more suitable
       - maildomain=${SITE_URL}
       - smtp_user=noreply:docker
+    labels:
+        org.geonode.component: smtp
+        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
   django:
@@ -175,6 +197,9 @@ services:
       - rabbitmq
       - qgis-server
       - codenvy
+    labels:
+        org.geonode.component: django
+        org.geonode.instance.name: geonode
 
   nginx:
     image: kartoza/geonode_nginx
@@ -183,9 +208,13 @@ services:
     volumes:
       - 'django-media-data:/home/web/media:ro'
       - 'django-static-data:/home/web/static:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
       - ${WEBSERVER_PORT}:80
     restart: unless-stopped
+    labels:
+        org.geonode.component: nginx
+        org.geonode.instance.name: geonode
 
   celery:
     image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
@@ -196,6 +225,7 @@ services:
       - 'qgis-server-qgis-layer-data:/usr/src/app/geonode/qgis_layer'
       - 'qgis-server-qgis-cache-data:/usr/src/app/geonode/qgis_tiles'
       - 'inasafe-headless-output-data:/home/geosafe/impact_layers'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     environment:
       - DEBUG=False
       - C_FORCE_ROOT=True
@@ -250,6 +280,10 @@ services:
       - rabbitmq
       - nginx
       - django
+    labels:
+        org.geonode.component: inasafe-headless
+        org.geonode.instance.name: geonode
+      
 
   inasafe-headless-analysis:
     image: kartoza/geonode_inasafe-headless
@@ -285,6 +319,10 @@ services:
     environment:
       - SECRET=${BTSYNC_DB_SECRET}
       - DEVICE=ProjectaDatabase
+    labels:
+        org.geonode.component: btsync-data
+        org.geonode.instance.name: geonode
+      
      
   btsync-media:
     # BTSync backups for django media
@@ -296,4 +334,7 @@ services:
     environment:
       - SECRET=${BTSYNC_MEDIA_SECRET}
       - DEVICE=OsmReporterLogs
+    labels:
+        org.geonode.component: btsync-media
+        org.geonode.instance.name: geonode
 
