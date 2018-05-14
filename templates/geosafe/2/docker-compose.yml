@@ -107,6 +107,7 @@ services:
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'qgis-server-qgis-layer-data:/usr/src/app/geonode/qgis_layer'
+      - '/var/run/docker.sock:/var/run/docker.sock'      
     environment:
       - DEBUG=True
       # Write to stdout so we dont fill the container with logs
@@ -182,7 +183,6 @@ services:
     volumes:
       - 'django-media-data:/home/web/media:ro'
       - 'django-static-data:/home/web/static:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
       - ${WEBSERVER_PORT}:80
     restart: unless-stopped
