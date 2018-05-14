@@ -56,18 +56,6 @@ catalog:
       required: false
       default: ""
       type: "string"
-    - variable: BTSYNC_DB_SECRET
-      label: "Database backups key"
-      description: "Resilio sync read/write key for syncing database backups"
-      required: false
-      default: 
-      type: "string"
-    - variable: BTSYNC_MEDIA_SECRET
-      label: "Media backups key"
-      description: "Resilio sync read/write key for syncing geonode media backups"
-      required: false
-      default: 
-      type: "string"
     - variable: IMAGE_TAG
       label: "Image tag"
       description: "Custom image tag to be imposed on kartoza/geonode_django_geosafe"

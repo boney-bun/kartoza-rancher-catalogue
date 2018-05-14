@@ -48,72 +48,6 @@ services:
     restart: unless-stopped
 
 
-  dbbackup: &dbbackup
-    image: kartoza/pg-backup:9.4
-    volumes:
-      - postgis-history-data:/backups
-    links:
-      - postgis
-    environment:
-      # make this equal to PG_$(PROJECT_ID) in makefile
-      - DUMPPREFIX=PG_geonode
-      # These are all defaults anyway, but setting explicitly in
-      # case we ever want to ever use different credentials
-      - PGUSER=${POSTGRES_USER}
-      - PGPASSWORD=${POSTGRES_PASS}
-      - PGDATABASE=${POSTGRES_DB}
-      - PGPORT=5432
-      - PGHOST=postgis
-    labels:
-        org.geonode.component: dbbackup
-        org.geonode.instance.name: geonode      
-    restart: unless-stopped
-
-
-  mediabackup:
-    image: kartoza/sftp-backup:1.0
-    volumes:
-      # this folder is used to store local backups from django media
-      - django-media-history-data:/backups
-      # this folder is used as target folder/source where the backup comes from
-      # this backup comes from django media
-      - django-media-data:/media_backup
-    environment:
-      - DUMPPREFIX=MEDIA_geonode
-      # reduce frequency because the dump is really big
-      - DAILY=3
-      - MONTHLY=2
-      - YEARLY=1
-      - TARGET_FOLDER=/media_backup
-      - USE_SFTP_BACKUP=False
-    labels:
-        org.geonode.component: mediabackup
-        org.geonode.instance.name: geonode      
-    restart: unless-stopped
-
-
-  qgisservermediabackup:
-    image: kartoza/sftp-backup:1.0
-    volumes:
-      # this folder is used to store local backups from django media
-      - qgis-server-qgis-layer-history-data:/backups
-      # this folder is used as target folder/source where the backup comes from
-      # this backup comes from django media
-      - qgis-server-qgis-layer-data:/media_backup
-    environment:
-      - DUMPPREFIX=MEDIA_qgisserver
-      # reduce frequency because the dump is really big
-      - DAILY=3
-      - MONTHLY=2
-      - YEARLY=1
-      - TARGET_FOLDER=/media_backup
-      - USE_SFTP_BACKUP=False
-    labels:
-        org.geonode.component: qgisservermediabackup
-        org.geonode.instance.name: geonode      
-    restart: unless-stopped
-
-
   qgis-server:
     image: rancher/lb-service-haproxy:v0.6.4
     expose:
@@ -262,6 +196,8 @@ services:
       - postgis
       - qgis-server
       - codenvy
+      
+      
   inasafe-headless:
     image: kartoza/geonode_inasafe-headless
     restart: on-failure
@@ -316,33 +252,3 @@ services:
       - nginx
       - django
       
-      
-  btsync-data:
-    # BTSync backups for database dumps
-    image: kartoza/btsync
-    hostname: btsync-data
-    restart: unless-stopped
-    volumes:
-      - postgis-history-data:/web:rw
-    environment:
-      - SECRET=${BTSYNC_DB_SECRET}
-      - DEVICE=ProjectaDatabase
-    labels:
-        org.geonode.component: btsync-data
-        org.geonode.instance.name: geonode
-      
-     
-  btsync-media:
-    # BTSync backups for django media
-    image: kartoza/btsync
-    hostname: btsync-logs
-    restart: unless-stopped
-    volumes:
-      - django-media-history-data:/web:rw
-    environment:
-      - SECRET=${BTSYNC_MEDIA_SECRET}
-      - DEVICE=OsmReporterLogs
-    labels:
-        org.geonode.component: btsync-media
-        org.geonode.instance.name: geonode
-
