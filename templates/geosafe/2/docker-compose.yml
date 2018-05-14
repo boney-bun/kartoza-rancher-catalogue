@@ -19,15 +19,6 @@ volumes:
 
 services:
 
-  codenvy:
-    image: codenvy/che-ip:nightly
-    network_mode: "host"
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-    labels:
-        org.geonode.component: codenvy
-        org.geonode.instance.name: geonode
-
   rabbitmq:
     image: rabbitmq
     labels:
@@ -48,6 +39,7 @@ services:
         org.geonode.component: postgis
         org.geonode.instance.name: geonode      
     restart: unless-stopped
+
 
   dbbackup: &dbbackup
     image: kartoza/pg-backup:9.4
@@ -70,6 +62,7 @@ services:
         org.geonode.instance.name: geonode      
     restart: unless-stopped
 
+
   mediabackup:
     image: kartoza/sftp-backup:1.0
     volumes:
@@ -90,6 +83,7 @@ services:
         org.geonode.component: mediabackup
         org.geonode.instance.name: geonode      
     restart: unless-stopped
+
 
   qgisservermediabackup:
     image: kartoza/sftp-backup:1.0
@@ -112,6 +106,7 @@ services:
         org.geonode.instance.name: geonode      
     restart: unless-stopped
 
+
   qgis-server:
     image: rancher/lb-service-haproxy:v0.6.4
     expose:
@@ -120,6 +115,7 @@ services:
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: 'true'      
     restart: unless-stopped
+
 
   qgis-server-backend:
     image: kartoza/geonode_qgis-server
@@ -142,6 +138,7 @@ services:
       io.rancher.container.pull_image: always
     restart: unless-stopped
 
+
   smtp:
     image: catatnight/postfix
     hostname: postfix
@@ -153,6 +150,7 @@ services:
         org.geonode.component: smtp
         org.geonode.instance.name: geonode      
     restart: unless-stopped
+
 
   django:
     image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
@@ -201,6 +199,7 @@ services:
         org.geonode.component: django
         org.geonode.instance.name: geonode
 
+
   nginx:
     image: kartoza/geonode_nginx
     links:
@@ -215,6 +214,7 @@ services:
     labels:
         org.geonode.component: nginx
         org.geonode.instance.name: geonode
+
 
   celery:
     image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
