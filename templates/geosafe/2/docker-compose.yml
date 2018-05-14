@@ -196,6 +196,9 @@ services:
       - postgis
       - qgis-server
       - codenvy
+    labels:
+        org.geonode.component: celery
+        org.geonode.instance.name: geonode
       
       
   inasafe-headless:
@@ -251,4 +254,8 @@ services:
       - rabbitmq
       - nginx
       - django
+    labels:
+        org.geonode.component: inasafe-headless-analysis
+        org.geonode.instance.name: geonode
+      
       
