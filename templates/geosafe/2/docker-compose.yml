@@ -21,16 +21,9 @@ services:
 
   codenvy:
     image: codenvy/che-ip:nightly
-    labels:
-        org.geonode.component: codenvy
-        org.geonode.instance.name: geonode
-        
 
   rabbitmq:
     image: rabbitmq
-    labels:
-        org.geonode.component: rabbitmq
-        org.geonode.instance.name: geonode
     
 
   postgis:
@@ -42,9 +35,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASS=${POSTGRES_PASS}
       - ALLOW_IP_RANGE=${POSTGRES_HBA_RANGE}
-    labels:
-        org.geonode.component: postgis
-        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
 
@@ -87,9 +77,6 @@ services:
       # You could change this to something more suitable
       - maildomain=${SITE_URL}
       - smtp_user=noreply:docker
-    labels:
-        org.geonode.component: smtp
-        org.geonode.instance.name: geonode      
     restart: unless-stopped
 
 
@@ -135,9 +122,6 @@ services:
       - rabbitmq
       - qgis-server
       - codenvy
-    labels:
-        org.geonode.component: django
-        org.geonode.instance.name: geonode
 
 
   nginx:
@@ -151,9 +135,6 @@ services:
     ports:
       - ${WEBSERVER_PORT}:80
     restart: unless-stopped
-    labels:
-        org.geonode.component: nginx
-        org.geonode.instance.name: geonode
 
 
   celery:
@@ -196,9 +177,6 @@ services:
       - postgis
       - qgis-server
       - codenvy
-    labels:
-        org.geonode.component: celery
-        org.geonode.instance.name: geonode
       
       
   inasafe-headless:
@@ -225,9 +203,6 @@ services:
       - rabbitmq
       - nginx
       - django
-    labels:
-        org.geonode.component: inasafe-headless
-        org.geonode.instance.name: geonode
       
 
   inasafe-headless-analysis:
@@ -254,8 +229,4 @@ services:
       - rabbitmq
       - nginx
       - django
-    labels:
-        org.geonode.component: inasafe-headless-analysis
-        org.geonode.instance.name: geonode
-      
       
