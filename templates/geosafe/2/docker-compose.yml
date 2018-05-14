@@ -19,6 +19,13 @@ volumes:
 
 services:
 
+  codenvy:
+    image: codenvy/che-ip:nightly
+    labels:
+        org.geonode.component: codenvy
+        org.geonode.instance.name: geonode
+        
+
   rabbitmq:
     image: rabbitmq
     labels:
