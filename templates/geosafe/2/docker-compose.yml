@@ -224,6 +224,7 @@ services:
       - rabbitmq
       - postgis
       - qgis-server
+      - codenvy
   inasafe-headless:
     image: kartoza/geonode_inasafe-headless
     restart: on-failure
