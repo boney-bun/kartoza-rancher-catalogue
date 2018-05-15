@@ -24,14 +24,25 @@ services:
     labels:
         org.geonode.component: codenvy
         org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+
+
   rabbitmq:
     image: rabbitmq
+    labels:
+        org.geonode.component: rabbitmq
+        org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
     
 
   postgis:
     image: kartoza/geonode_db
     volumes:
       - 'postgis-data:/var/lib/postgresql'
+    labels:
+        org.geonode.component: db
+        org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -80,6 +91,11 @@ services:
       - maildomain=${SITE_URL}
       - smtp_user=noreply:docker
     restart: unless-stopped
+    labels:
+        org.geonode.component: smtp
+        org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+    
 
 
   django:
@@ -118,16 +134,24 @@ services:
       - USE_LAYER_HTTP_ACCESS=False
       - INASAFE_ANALYSIS_RUN_TIME_LIMIT=600
       - INASAFE_ANALYSIS_AREA_LIMIT=1000000000
+      - GEONODE_INSTANCE_NAME=geonode
+      - GEONODE_LB_HOST_IP=<host-server-public-ip>
+      - GEONODE_LB_PORT=80
+      - DOCKER_ENV=production
+      - UWSGI_CMD=uwsgi --ini /usr/src/app/uwsgi.ini
+      - IS_CELERY=false
+      - C_FORCE_ROOT=1
     labels:
         org.geonode.component: django
-        org.geonode.instance.name: geonode      
+        org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+        io.rancher.container.pull_image: always
     restart: unless-stopped
     links:
       - postgis
       - rabbitmq
       - qgis-server
       - codenvy
-
 
   nginx:
     image: kartoza/geonode_nginx
@@ -140,6 +164,8 @@ services:
     labels:
         org.geonode.component: nginx
         org.geonode.instance.name: geonode
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+        io.rancher.container.pull_image: always
     ports:
       - ${WEBSERVER_PORT}:80
     restart: unless-stopped
@@ -179,9 +205,15 @@ services:
       - USE_LAYER_HTTP_ACCESS=False
       - INASAFE_ANALYSIS_RUN_TIME_LIMIT=600
       - INASAFE_ANALYSIS_AREA_LIMIT=1000000000
+      - GEONODE_INSTANCE_NAME=geonode
+      - GEONODE_LB_HOST_IP=<host-server-public-ip>
+      - GEONODE_LB_PORT=80
+      - IS_CELERY=true
     labels:
         org.geonode.component: celery
         org.geonode.instance.name: geonode      
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+        io.rancher.container.pull_image: always
     command: celery -A geosafe worker -l debug -Q default,cleanup,email,update,geosafe -n geonode.%h -B
     links:
       - rabbitmq
@@ -189,7 +221,7 @@ services:
       - qgis-server
       - codenvy
       
-      
+            
   inasafe-headless:
     image: kartoza/geonode_inasafe-headless
     restart: on-failure
@@ -209,6 +241,11 @@ services:
     volumes:
       - 'django-media-data:/home/geosafe/media/'
       - 'inasafe-headless-output-data:/home/output/'
+    labels:
+        org.geonode.component: inasafe-headless
+        org.geonode.instance.name: geonode      
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+        io.rancher.container.pull_image: always
     command: /start-celery.sh prod inasafe-headless
     links:
       - rabbitmq
@@ -235,6 +272,12 @@ services:
     volumes:
       - 'django-media-data:/home/geosafe/media/'
       - 'inasafe-headless-output-data:/home/output/'
+    labels:
+        org.geonode.component: inasafe-headless-analysis
+        org.geonode.instance.name: geonode      
+        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
+        io.rancher.container.pull_image: always
+      
     command: /start-celery.sh prod inasafe-headless-analysis
     links:
       - rabbitmq
