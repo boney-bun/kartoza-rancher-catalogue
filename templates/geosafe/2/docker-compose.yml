@@ -24,7 +24,6 @@ services:
     labels:
         org.geonode.component: codenvy
         org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
 
 
   rabbitmq:
@@ -32,7 +31,6 @@ services:
     labels:
         org.geonode.component: rabbitmq
         org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
     
 
   postgis:
@@ -42,7 +40,6 @@ services:
     labels:
         org.geonode.component: db
         org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -93,9 +90,7 @@ services:
     restart: unless-stopped
     labels:
         org.geonode.component: smtp
-        org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
-    
+        org.geonode.instance.name: geonode    
 
 
   django:
@@ -144,7 +139,6 @@ services:
     labels:
         org.geonode.component: django
         org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
         io.rancher.container.pull_image: always
     restart: unless-stopped
     links:
@@ -164,7 +158,6 @@ services:
     labels:
         org.geonode.component: nginx
         org.geonode.instance.name: geonode
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
         io.rancher.container.pull_image: always
     ports:
       - ${WEBSERVER_PORT}:80
@@ -212,7 +205,6 @@ services:
     labels:
         org.geonode.component: celery
         org.geonode.instance.name: geonode      
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
         io.rancher.container.pull_image: always
     command: celery -A geosafe worker -l debug -Q default,cleanup,email,update,geosafe -n geonode.%h -B
     links:
@@ -244,7 +236,6 @@ services:
     labels:
         org.geonode.component: inasafe-headless
         org.geonode.instance.name: geonode      
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
         io.rancher.container.pull_image: always
     command: /start-celery.sh prod inasafe-headless
     links:
@@ -275,7 +266,6 @@ services:
     labels:
         org.geonode.component: inasafe-headless-analysis
         org.geonode.instance.name: geonode      
-        io.rancher.scheduler.affinity:host_label: geonodehost=<host label value>
         io.rancher.container.pull_image: always
       
     command: /start-celery.sh prod inasafe-headless-analysis
