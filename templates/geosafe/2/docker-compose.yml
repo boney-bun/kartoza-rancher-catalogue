@@ -141,11 +141,11 @@ services:
         org.geonode.instance.name: geonode
         io.rancher.container.pull_image: always
     restart: unless-stopped
-    links:
-      - postgis
-      - rabbitmq
-      - qgis-server
-      - codenvy
+#    links:
+#      - postgis
+#      - rabbitmq
+#      - qgis-server
+#      - codenvy
 
   nginx:
     image: kartoza/geonode_nginx
@@ -207,11 +207,11 @@ services:
         org.geonode.instance.name: geonode      
         io.rancher.container.pull_image: always
     command: celery -A geosafe worker -l debug -Q default,cleanup,email,update,geosafe -n geonode.%h -B
-    links:
-      - rabbitmq
-      - postgis
-      - qgis-server
-      - codenvy
+#    links:
+#      - rabbitmq
+#      - postgis
+#      - qgis-server
+#      - codenvy
       
             
   inasafe-headless:
