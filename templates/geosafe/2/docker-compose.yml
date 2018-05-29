@@ -21,6 +21,7 @@ services:
 
   codenvy:
     image: codenvy/che-ip:nightly
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq
