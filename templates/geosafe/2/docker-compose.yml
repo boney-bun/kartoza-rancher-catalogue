@@ -100,7 +100,8 @@ services:
     restart: unless-stopped
 
   qgis-server-backend:
-    image: kartoza/geonode_qgis-server
+#    image: kartoza/geonode_qgis-server:${QGIS-SERVER_IMAGE_TAG}
+    image: kartoza/qgis-server:${QGIS-SERVER_IMAGE_TAG}
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'qgis-server-qgis-layer-data:/usr/src/app/geonode/qgis_layer'
@@ -129,7 +130,7 @@ services:
     restart: unless-stopped
 
   django:
-    image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
+    image: kartoza/geonode_django_geosafe:${DJANGO_IMAGE_TAG}
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'django-static-data:/usr/src/app/geonode/static_root'
@@ -194,7 +195,7 @@ services:
     restart: unless-stopped
 
   celery:
-    image: kartoza/geonode_django_geosafe:${IMAGE_TAG}
+    image: kartoza/geonode_django_geosafe:${CELERY_IMAGE_TAG}
     restart: on-failure
     working_dir: /usr/src/app
     volumes:
