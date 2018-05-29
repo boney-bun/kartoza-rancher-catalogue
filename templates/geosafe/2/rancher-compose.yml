@@ -80,12 +80,6 @@ catalog:
       required: false
       default: latest
       type: "string"
-    - variable: QGIS-SERVER_IMAGE_TAG
-      label: "QGIS SERVER image tag"
-      description: "Determine the image tag to be used in QGIS-SERVER services"
-      required: false
-      default: LTR
-      type: "string"
 
 services:
   qgis-server:

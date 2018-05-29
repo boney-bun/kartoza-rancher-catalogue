@@ -101,7 +101,7 @@ services:
 
   qgis-server-backend:
 #    image: kartoza/geonode_qgis-server:${QGIS-SERVER_IMAGE_TAG}
-    image: kartoza/qgis-server:${QGIS-SERVER_IMAGE_TAG}
+    image: kartoza/qgis-server:LTR
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'qgis-server-qgis-layer-data:/usr/src/app/geonode/qgis_layer'
