@@ -101,8 +101,7 @@ services:
     restart: unless-stopped
 
   qgis-server-backend:
-#    image: kartoza/geonode_qgis-server:${QGIS-SERVER_IMAGE_TAG}
-    image: kartoza/qgis-server:2.18.20
+    image: kartoza/geonode_qgis-server
     volumes:
       - 'django-media-data:/usr/src/app/geonode/uploaded'
       - 'qgis-server-qgis-layer-data:/usr/src/app/geonode/qgis_layer'
@@ -180,7 +179,7 @@ services:
     restart: unless-stopped
     links:
       - postgis
-      - rabbitmq
+#      - rabbitmq
       - qgis-server
     depends_on:
       - codenvy
@@ -240,7 +239,7 @@ services:
         io.rancher.container.pull_image: always
     command: celery -A geosafe worker -l debug -Q default,cleanup,email,update,geosafe -n geonode.%h -B
     links:
-      - rabbitmq
+#      - rabbitmq
       - postgis
       - qgis-server
     depends_on:
