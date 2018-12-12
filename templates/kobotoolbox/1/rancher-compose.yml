@@ -14,9 +14,9 @@ catalog:
         - "True"
         - "False"
     - variable: CUSTOM_KPI_THEME_APP_PIP_URL
-      label: "The django app PIP URL for installation"
-      description: "Example: git+https://github.com/user/repo.git@tag"
-      default: "git+https://github.com/kartoza/custom_kpi_theme@develop"
+      label: "The django KPI app PIP URL for installation"
+      description: "Example: git+ssh://git@github.com/user/repo.git@tag"
+      default: "git+ssh://git@github.com/kartoza/custom_kpi_theme.git@develop"
       type: "string"
 
     - variable: USE_KOBOCAT_THEME_APP
@@ -28,9 +28,9 @@ catalog:
         - "True"
         - "False"
     - variable: CUSTOM_KOBOCAT_THEME_APP_PIP_URL
-      label: "The django app PIP URL for installation"
-      description: "Example: git+https://github.com/user/repo.git@tag"
-      default: "git+https://github.com/kartoza/custom_kobocat_theme@develop"
+      label: "The django Kobocat app PIP URL for installation"
+      description: "Example: git+ssh://git@github.com/user/repo.git@tag"
+      default: "git+ssh://git@github.com/kartoza/custom_kobocat_theme.git"
       type: "string"
 
     - variable: ENKETO_API_TOKEN

@@ -81,6 +81,11 @@ volumes:
 #      type: none
 #      o: bind
 #      device: '$PWD/secrets/'
+  kobocat-credentials:
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: '$PWD/custom_ssh_key/'
 services:
 
   {{- if eq .Values.USE_EXTERNAL_SMTP "false" }}
@@ -207,97 +212,126 @@ services:
       io.rancher.container.pull_image: always
 
   kobocat:
-    image: kartoza/kobotoolbox_kobocat:2.018.31
+    # image: kartoza/kobotoolbox_kobocat:2.018.31
+    image: kartoza/kobotoolbox_kobocat:latest
     environment:
-      - ENKETO_API_TOKEN=${ENKETO_API_TOKEN}
-      - DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY}"
-      - KOBO_SUPERUSER_USERNAME=${KOBO_SUPERUSER_USERNAME}
-      - KOBO_SUPERUSER_PASSWORD=${KOBO_SUPERUSER_PASSWORD}
-      - KOBO_SUPPORT_EMAIL=${KOBO_SUPPORT_EMAIL}
-      - POSTGRES_BACKUP_SCHEDULE=${POSTGRES_BACKUP_SCHEDULE}
-      - MONGO_BACKUP_SCHEDULE=${MONGO_BACKUP_SCHEDULE}
-      - KOBOCAT_MEDIA_BACKUP_SCHEDULE=${KOBOCAT_MEDIA_BACKUP_SCHEDULE}
+      ENKETO_API_TOKEN: ${ENKETO_API_TOKEN}
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY}"
+      KOBO_SUPERUSER_USERNAME: ${KOBO_SUPERUSER_USERNAME}
+      KOBO_SUPERUSER_PASSWORD: ${KOBO_SUPERUSER_PASSWORD}
+      KOBO_SUPPORT_EMAIL: ${KOBO_SUPPORT_EMAIL}
+      POSTGRES_BACKUP_SCHEDULE: ${POSTGRES_BACKUP_SCHEDULE}
+      MONGO_BACKUP_SCHEDULE: ${MONGO_BACKUP_SCHEDULE}
+      KOBOCAT_MEDIA_BACKUP_SCHEDULE: ${KOBOCAT_MEDIA_BACKUP_SCHEDULE}
 
       {{- if eq .Values.KOBOTOOLBOX_PROTOCOL "http" }}
 
-      - HOST_ADDRESS=${PUBLIC_DOMAIN_NAME}
-      - KPI_PUBLIC_PORT=9000
-      - KOBOCAT_PUBLIC_PORT=9001
-      - ENKETO_EXPRESS_PUBLIC_PORT=9005
+      HOST_ADDRESS: ${PUBLIC_DOMAIN_NAME}
+      KPI_PUBLIC_PORT: "9000"
+      KOBOCAT_PUBLIC_PORT: "9001"
+      ENKETO_EXPRESS_PUBLIC_PORT: "9005"
 
       {{- end }}
 
       {{- if eq .Values.KOBOTOOLBOX_PROTOCOL "https" }}
 
-      - PUBLIC_DOMAIN_NAME=${PUBLIC_DOMAIN_NAME}
-      - KOBOFORM_PUBLIC_SUBDOMAIN=${KOBOFORM_PUBLIC_SUBDOMAIN}
-      - KOBOCAT_PUBLIC_SUBDOMAIN=${KOBOCAT_PUBLIC_SUBDOMAIN}
-      - ENKETO_EXPRESS_PUBLIC_SUBDOMAIN=${ENKETO_EXPRESS_PUBLIC_SUBDOMAIN}
+      PUBLIC_DOMAIN_NAME: ${PUBLIC_DOMAIN_NAME}
+      KOBOFORM_PUBLIC_SUBDOMAIN: ${KOBOFORM_PUBLIC_SUBDOMAIN}
+      KOBOCAT_PUBLIC_SUBDOMAIN: ${KOBOCAT_PUBLIC_SUBDOMAIN}
+      ENKETO_EXPRESS_PUBLIC_SUBDOMAIN: ${ENKETO_EXPRESS_PUBLIC_SUBDOMAIN}
 
       {{- end }}
 
       {{- if eq .Values.USE_ENV_VAR "true" }}
 
-      - USE_ENV_VAR=${USE_ENV_VAR}
-      - KOBOFORM_URL=${KOBOTOOLBOX_PROTOCOL}://${KOBOFORM_SERVER_NAME}
-      - KOBOCAT_URL=${KOBOTOOLBOX_PROTOCOL}://${KOBOCAT_SERVER_NAME}
-      - ENKETO_URL=${KOBOTOOLBOX_PROTOCOL}://${ENKETO_SERVER_NAME}
-      - CSRF_COOKIE_DOMAIN=${CSRF_COOKIE_DOMAIN}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - KOBOFORM_SERVER_NAME=${KOBOFORM_SERVER_NAME}
-      - KOBOCAT_SERVER_NAME=${KOBOCAT_SERVER_NAME}
-      - ENKETO_SERVER_NAME=${ENKETO_SERVER_NAME}
+      USE_ENV_VAR: ${USE_ENV_VAR}
+      KOBOFORM_URL: ${KOBOTOOLBOX_PROTOCOL}://${KOBOFORM_SERVER_NAME}
+      KOBOCAT_URL: ${KOBOTOOLBOX_PROTOCOL}://${KOBOCAT_SERVER_NAME}
+      ENKETO_URL: ${KOBOTOOLBOX_PROTOCOL}://${ENKETO_SERVER_NAME}
+      CSRF_COOKIE_DOMAIN: ${CSRF_COOKIE_DOMAIN}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      KOBOFORM_SERVER_NAME: ${KOBOFORM_SERVER_NAME}
+      KOBOCAT_SERVER_NAME: ${KOBOCAT_SERVER_NAME}
+      ENKETO_SERVER_NAME: ${ENKETO_SERVER_NAME}
 
       {{- end }}
 
-      - KOBOCAT_DJANGO_DEBUG=False
-      - TEMPLATE_DEBUG=False
-      - DJANGO_SETTINGS_MODULE=onadata.settings.kc_environ
-      - ENKETO_VERSION=Express
-      - DATABASE_URL=postgis://kobo:kobo@postgres:5432/kobotoolbox
-      - KOBO_POSTGRES_DB_NAME=kobotoolbox
-      - KOBO_POSTGRES_USER=kobo
-      - KOBOCAT_BROKER_URL=amqp://kobocat:kobocat@rabbit:5672/kobocat
+      KOBOCAT_DJANGO_DEBUG: False
+      TEMPLATE_DEBUG: False
+      DJANGO_SETTINGS_MODULE: onadata.settings.kc_environ
+      ENKETO_VERSION: Express
+      DATABASE_URL: postgis://kobo:kobo@postgres:5432/kobotoolbox
+      KOBO_POSTGRES_DB_NAME: kobotoolbox
+      KOBO_POSTGRES_USER: kobo
+      KOBOCAT_BROKER_URL: amqp://kobocat:kobocat@rabbit:5672/kobocat
 
-      - KPI_WEB_SERVER=${PROXY_WEB_SERVER}
-      - KOBOCAT_WEB_SERVER=${PROXY_WEB_SERVER}
-      - KOBOCAT_STATIC_FILES_SERVER=Nginx
-      - KPI_STATIC_FILES_SERVER=Nginx
+      KPI_WEB_SERVER: ${PROXY_WEB_SERVER}
+      KOBOCAT_WEB_SERVER: ${PROXY_WEB_SERVER}
+      KOBOCAT_STATIC_FILES_SERVER: Nginx
+      KPI_STATIC_FILES_SERVER: Nginx
 
-      - ENKETO_PROTOCOL=${KOBOTOOLBOX_PROTOCOL}
+      ENKETO_PROTOCOL: ${KOBOTOOLBOX_PROTOCOL}
 
-      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
 
       {{- if eq .Values.USE_EXTERNAL_SMTP "true" }}
 
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_PORT=${EMAIL_PORT}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS}
 
       {{- else }}
 
-      - EMAIL_HOST=smtp
-      - EMAIL_PORT=25
-      - EMAIL_HOST_USER=noreply
-      - EMAIL_HOST_PASSWORD=docker
-      - EMAIL_USE_TLS=False
+      EMAIL_HOST=smtp
+      EMAIL_PORT=25
+      EMAIL_HOST_USER=noreply
+      EMAIL_HOST_PASSWORD=docker
+      EMAIL_USE_TLS=False
 
       {{- end }}
 
       {{- if eq .Values.USE_KOBOCAT_THEME_APP "True" }}
 
-      - DJANGO_SETTINGS_MODULE=custom_kobocat_theme.settings
-      - PYTHONPATH=/srv/src/custom_kobocat_theme
-      - CUSTOM_KOBOCAT_THEME_APP_PIP_URL=${CUSTOM_KOBOCAT_THEME_APP_PIP_URL}
-
+      DJANGO_SETTINGS_MODULE=custom_kobocat_theme.settings
+      PYTHONPATH=/srv/src/custom_kobocat_theme
+      CUSTOM_KOBOCAT_THEME_APP_PIP_URL=${CUSTOM_KOBOCAT_THEME_APP_PIP_URL}
+      CUSTOM_KOBOCAT_THEME_DEPLOY_KEY:
+      |-
+         -----BEGIN OPENSSH PRIVATE KEY-----
+         b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+         NhAAAAAwEAAQAAAQEA09Mlm2VpgG37GqKVjSmHBxr5eigOVtyzDBEht9h7BKcTdtYm8R68
+         WKpbU2YdoH4yqfoKGv1EaOdJBpCS6wyNhXYWXJUSP6soekm4IQ6UQ85wie8DuJV+RFyFOd
+         9ryhhxhhleBxAwTzuaJrrGR6HJU/wE+W5qD40k3AnUynaIjaoL+reXY/Ym+1dNTOgTcK0T
+         jpimfuOwlycV30hEYuOf19YeX4vN9e5dovs6Q10y3lvrlDPz0Kp4g1MCx8bKh5N2Ji0vkr
+         Ok6GQPhp1C+jiS2g3kv/tFXzZArSF5/4Xg/taUlsF0uSVC+7pB4jfS7kU7ZPTFj2VbbeGJ
+         LeYB/oxiSQAAA8hV5tn7VebZ+wAAAAdzc2gtcnNhAAABAQDT0yWbZWmAbfsaopWNKYcHGv
+         l6KA5W3LMMESG32HsEpxN21ibxHrxYqltTZh2gfjKp+goa/URo50kGkJLrDI2FdhZclRI/
+         qyh6SbghDpRDznCJ7wO4lX5EXIU532vKGHGGGV4HEDBPO5omusZHoclT/AT5bmoPjSTcCd
+         TKdoiNqgv6t5dj9ib7V01M6BNwrROOmKZ+47CXJxXfSERi45/X1h5fi8317l2i+zpDXTLe
+         W+uUM/PQqniDUwLHxsqHk3YmLS+Ss6ToZA+GnUL6OJLaDeS/+0VfNkCtIXn/heD+1pSWwX
+         S5JUL7ukHiN9LuRTtk9MWPZVtt4Ykt5gH+jGJJAAAAAwEAAQAAAQA98NRiaHk9UOvIkhph
+         OO9/KGgjTGtFAyxoLupJNEhkx+ZtLZodj/tLgiVKceXf9IckJTWnRsAmXNuBy+zqRrVrfW
+         h0kjLP42DmwX/SSs0YNtm5u+a+pxhRLSzYC3kdk6A+slRIhHdb8/XTtXIdqDWTFXLu7Vae
+         TYulvEo5Ggg8RCCny7cCwZrLwfzYortbAsbLfo9jHRqd3InZ/y1lhAH4kOVaS4q6IfFitr
+         FnkF3yYPqC+dzNJwCjQkLVfBy83bYUHASqrL/E5mw31cMMixXuFRKsevgTxQA+/diUUX57
+         mvlS25CT1nNC5H4OnA+0uo4arauuiuzX8h9V9hE8jlIBAAAAgBnC1xpsDBVOMZdSjKQyKq
+         +RwxMI7QM3uuoJrAAowrlm2yotXQ7KHde+1nohbXOnZxWLD/Bm86jD7g5J8bfz9C/oBZoI
+         3/ZX5l+M3pfcIfOt2ZuSLb8xL/UAwVnP0sBdKdQKabq1XT+GR61BLPCVqZNClzq3QOX8RJ
+         h33YzjyO+uAAAAgQD9X/AydxQTYAnFzyI3N2o22tbfRqbx5gqfIxhLGCMc8sdybxMGtjfe
+         JfrXoYxDAnRUh4oNdDLZH6fuf6IuAD5qd1oCMEKmngyehu5JeXKUPP3ttDwbjml2kHsswm
+         FI5dFsaRrGDv6UWaABvAA4FVBJFgM29aM7J/ntiQlWm8H6kQAAAIEA1gT/8V55fIgpxi/t
+         BvJ8mYGC5uImOexhV+xsk1TitzLRdvGwVeTd8DloNH0jGPdUlSBgKiDI3v+aHONT+i89tZ
+         PCcTWJzqi6tLjpO2jA1PkkQnkoGW2ql4KuAHq5XntRgEQHIyhfwt3YMa5IueG+PwW+H1lj
+         t5ykIYwagLX+GDkAAAARYm9uZXlAa2FydG96YS5jb20BAg==
+         -----END OPENSSH PRIVATE KEY-----
       {{- end}}
 
-      - DEFAULT_FROM_EMAIL=${KOBO_SUPPORT_EMAIL}
+      DEFAULT_FROM_EMAIL=${KOBO_SUPPORT_EMAIL}
 
-      - CELERYD_TASK_TIME_LIMIT=${TASK_TIMEOUT}
-      - CELERYD_TASK_SOFT_TIME_LIMIT=${TASK_SOFT_TIMEOUT}
+      CELERYD_TASK_TIME_LIMIT=${TASK_TIMEOUT}
+      CELERYD_TASK_SOFT_TIME_LIMIT=${TASK_SOFT_TIMEOUT}
     volumes:
       - vols-static-kobocat:/srv/static
       - vols-kobocatmedia:/srv/src/kobocat/media
@@ -316,7 +350,8 @@ services:
       io.rancher.container.pull_image: always
 
   kpi:
-    image: kartoza/kobotoolbox_kpi:2.018.32
+    # image: kartoza/kobotoolbox_kpi:2.018.32
+    image: kartoza/kobotoolbox_kpi:develop
     environment:
       - ENKETO_API_TOKEN=${ENKETO_API_TOKEN}
       - DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY}"
