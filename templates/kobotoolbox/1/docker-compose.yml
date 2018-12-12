@@ -81,11 +81,6 @@ volumes:
 #      type: none
 #      o: bind
 #      device: '$PWD/secrets/'
-  kobocat-credentials:
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: '$PWD/custom_ssh_key/'
 services:
 
   {{- if eq .Values.USE_EXTERNAL_SMTP "false" }}
